@@ -2,6 +2,9 @@ import csv
 from objects import Package
 from hash_table import HashTable
 
+packageHash = HashTable()
+
+
 def load_package_data(file_name):
     with open(file_name) as packages:
         package_data = csv.reader(packages, delimiter=',')
@@ -21,12 +24,13 @@ def load_package_data(file_name):
             # Insert the package into the hash table
             packageHash.insert(package_id, package)
 
-packageHash = HashTable()
+
+def load_adjacency_data(file_name):
+    with open(file_name) as distances:
+        adjacency_data = list(csv.reader(distances, delimiter=','))
+
 
 load_package_data('./data/packages.csv')
-
-for i in range(len(packageHash.table)):
-    print("Key: {} and Package: {}".format(i+1, packageHash.search(i+1)))
-
+load_adjacency_data('./data/distances.csv')
 
 
