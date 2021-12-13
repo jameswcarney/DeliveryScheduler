@@ -35,13 +35,13 @@ def load_adjacency_data(file_name):
 # Load address data from addresses.csv to create an address list
 def load_address_data(file_name):
     with open(file_name) as addresses:
-        address_data = csv.reader(addresses, delimiter=',')
-        for address in address_data:
-            globals.address_list.append(address[1])
+        address_data = list(csv.reader(addresses, delimiter=','))
+        globals.address_list = address_data
 
 
 load_package_data('./data/packages.csv')
 load_adjacency_data('./data/distances.csv')
 load_address_data('./data/addresses.csv')
+
 
 

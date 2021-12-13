@@ -17,7 +17,14 @@ class Package:
 
 
 class Truck:
-    def __init__(self, package_list, delivery_route):
-        self.packages = package_list
-        self.route = delivery_route
+    def __init__(self):
+        self.packages = None
+
+    def add_package(self, package):
+        if self.packages is None:
+            self.packages = []
+        self.packages.append(package)
+
+    def nearest_neighbor(self, packages):
+        pass
 
