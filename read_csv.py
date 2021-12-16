@@ -1,9 +1,10 @@
 import csv
 import globals
-from objects import Package
 
 
 # Load package data from packages.csv and insert it into a hash table
+# We make some choices here about which truck a package should be loaded to
+# based on required delivery time and any special notes or delays
 def load_package_data(file_name):
     with open(file_name) as packages:
         package_data = csv.reader(packages, delimiter=',')
@@ -16,32 +17,56 @@ def load_package_data(file_name):
             deadline = package[5]
             weight = package[6]
             notes = package[7]
-            status = "Loaded"
+            start = ''
+            location = ''
+            status = "Hub"
 
-            package = Package(package_id, address, city, state, zip, deadline, weight, notes, status)
+            key = package_id
+            to_be_loaded = [package_id, location, address, city, state, zip, deadline, weight, notes, start, location, status]
 
-            # Insert the package into the hash table
-            globals.packageHash.insert(package_id, package)
+            # We make some choices here about which truck a package should be loaded to
+            # based on required delivery time and any special notes or delays.
+            # We should probably do this in a load_trucks script, but it goes here for now.
+
+            if to_be_loaded[6] != 'EOD':
+                if 'Must' in to_be_loaded[8] or 'None' in to_be_loaded[8]:
+                    globals.truck_one_packages.append(to_be_loaded)
+            if 'Can only be' in to_be_loaded[8]:
+                globals.truck_two_packages.append(to_be_loaded)
+            if 'Delayed' in to_be_loaded[8]:
+                globals.truck_two_packages.append(to_be_loaded)
+            if '84104' in to_be_loaded[5] and '10:30' not in to_be_loaded[6]:
+                globals.truck_three_packages.append(to_be_loaded)
+            if 'Wrong address listed' in to_be_loaded[8]:
+                to_be_loaded[2] = '410 S State St'
+                to_be_loaded[5] = '84111'
+                globals.truck_three_packages.append(to_be_loaded)
+            if (to_be_loaded not in globals.truck_one_packages and
+                    to_be_loaded not in globals.truck_two_packages and
+                    to_be_loaded not in globals.truck_three_packages):
+                if len(globals.truck_two_packages) > len(globals.truck_three_packages):
+                    globals.truck_three_packages.append(to_be_loaded)
+                else:
+                    globals.truck_two_packages.append(to_be_loaded)
+
+            globals.package_hash.insert(key, to_be_loaded)
 
 
-# Load weighted distance data from distances.csv and use it to create an adjacency list
 def load_adjacency_data(file_name):
-    with open(file_name) as distances:
-        adjacency_data = list(csv.reader(distances, delimiter=','))
-        for node in adjacency_data:
-            globals.adjacency_list.append(node)
+    with open('./data/distances.csv') as distances:
+        for row in csv.reader(distances, delimiter=','):
+            globals.adjacency_list.append(row)
 
 
-# Load address data from addresses.csv to create an address list
 def load_address_data(file_name):
-    with open(file_name) as addresses:
-        address_data = list(csv.reader(addresses, delimiter=','))
-        globals.address_list = address_data
+    with open('./data/addresses.csv') as addresses:
+        for row in csv.reader(addresses, delimiter=','):
+            globals.address_list.append(row[2])
 
 
-load_package_data('./data/packages.csv')
-load_adjacency_data('./data/distances.csv')
-load_address_data('./data/addresses.csv')
+
+
+
 
 
 
