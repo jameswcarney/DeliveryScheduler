@@ -1,13 +1,18 @@
-#  Hash table for packages loaded from CSV files
-#
-#  This implementation uses chaining to resolve collisions,
-#  because the input data set is known ahead of time to be small.
-#  Searching for any key should be O(1), or nearly so, in all cases.
-#
-#  Time complexity is O(n) worst case, and O(1) average case.
-#
-#  Credit: C950 Webinar 1: Let's Go Hashing is the basis for this code,
-#          with some additional edits for my own clarity.
+"""
+Hash table for packages loaded from CSV files
+
+This implementation uses chaining to resolve collisions,
+because the input data set is known ahead of time to be small.
+Searching for any key should be O(1), or nearly so, in all cases.
+The structure is self-adjusting because chaining allows the structure
+to grow to handle more than one object with the same hash value.
+
+Time complexity: O(n) worst case, and O(1) average case.
+
+Credit: C950 Webinar 1: Let's Go Hashing is the basis for this code,
+ with some additional edits for my own clarity.
+"""
+
 
 class HashTable:
     def __init__(self, size=40):
@@ -19,7 +24,7 @@ class HashTable:
     def get_hash_key(self, key):
         return int(key) % len(self.table)
 
-    # Adds a package to the hash table. Updates a package if it already exists. Time complexity is O(n).
+    # Adds a package to the hash table. Updates a package if it already exists. Time complexity is O(1).
     def insert(self, key, item):
         # Determine which bucket the item should be inserted into, then get a reference to the list in that bucket
         bucket = self.get_hash_key(key)
@@ -36,7 +41,7 @@ class HashTable:
         bucket_list.append(key_value)
         return True
 
-    # Searches for an item in the hash table. Time complexity is O(n).
+    # Searches for an item in the hash table. Time complexity is O(1).
     def search(self, key):
         # Get the bucket associated with the key
         bucket = self.get_hash_key(key)
@@ -48,7 +53,7 @@ class HashTable:
                 return package[1]
         return None
 
-    # Removes an item from the hash table. Time complexity is O(n).
+    # Removes an item from the hash table. Time complexity is O(1).
     def remove(self, key):
         # Get the bucket associated with the key
         bucket = self.get_hash_key(key)
